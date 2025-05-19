@@ -3,8 +3,8 @@ import openai
 
 # 페이지 설정
 st.set_page_config(page_title="치치와 감정 알아보기", page_icon="🐱")
-st.title("🐱 치치에게 한 번 물어보라냥!")
-st.write("무슨 일이 있었냥? 그때 느낀 감정이 어떤 마음인지 함께 알아보자냥!")
+st.title("🐱 치치가 들어줄게냥!")
+st.write("무슨 일이 있었냥? 어떤 마음인지 함께 알아보자냥!")
 
 # ✅ secrets에서 API 키 가져오기
 openai.api_key = st.secrets["OPENAI_API_KEY"]
@@ -27,22 +27,22 @@ if "response" not in st.session_state:
 
 # GPT 응답 생성 함수
 def get_emotion_candidates(who, when, what):
-    prompt = f"누구: {who}\n언제: {when}\n어떤 일: {what}\n위 상황에서 예상되는 감정 단어 3개와 각 단어의 정의를 다음 형식으로 알려줘: 감정단어: 정의"
+    prompt = f"누구: {who}\n언제: {when}\n어떤 일: {what}\n위 상황에서 예상되는 감정 단어 3개와 각 단어의 정의를 다음 형식으로 알려줘: 감정단어: 정의. 감정 단어 외의 설명 문장은 절대 포함하지 마."
     response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "넌 감정을 분석해주는 따뜻한 고양이야. 사용자에게 '~냥' 말투로 반응하고, 상황을 듣고 예상 감정 단어를 정의와 함께 제공해줘."},
+            {"role": "system", "content": "넌 감정을 분석해주는 따뜻한 고양이야. 사용자에게 '~냥' 말투로 반응하고, 상황을 듣고 예상 감정 단어를 정의와 함께 제공해줘. 감정 단어 외의 설명 문장은 포함하지 마."},
             {"role": "user", "content": prompt}
         ]
     )
     return response.choices[0].message.content.strip()
 
 def get_alternative_emotions(who, when, what):
-    prompt = f"누구: {who}\n언제: {when}\n어떤 일: {what}\n이전에 제공한 감정이 아니라고 했을 때, 대체 가능한 감정 단어 3개와 그 정의를 감정단어: 정의 형태로 알려줘."
+    prompt = f"누구: {who}\n언제: {when}\n어떤 일: {what}\n이전에 제공한 감정이 아니라고 했을 때, 대체 가능한 감정 단어 3개와 그 정의를 감정단어: 정의 형태로 알려줘. 감정 단어 외의 설명 문장은 포함하지 마."
     response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "넌 감정을 분석해주는 따뜻한 고양이야. 사용자에게 '~냥' 말투로 반응하고, 상황을 듣고 예상 감정 단어를 정의와 함께 제공해줘."},
+            {"role": "system", "content": "넌 감정을 분석해주는 따뜻한 고양이야. 사용자에게 '~냥' 말투로 반응하고, 상황을 듣고 예상 감정 단어를 정의와 함께 제공해줘. 감정 단어 외의 설명 문장은 포함하지 마."},
             {"role": "user", "content": prompt}
         ]
     )
@@ -61,7 +61,7 @@ def get_final_response(emotion, who, when, what):
 
 # 단계별 인터페이스
 if st.session_state.stage == "ask_who":
-    st.session_state.who = st.text_input("🐱 누구와 있었던 일이냥?")
+    st.session_state.who = st.text_input("🐱 누구와 있었냥?")
     if st.button("다음") and st.session_state.who.strip():
         st.session_state.stage = "ask_when"
         st.rerun()
@@ -73,11 +73,11 @@ elif st.session_state.stage == "ask_when":
         st.rerun()
 
 elif st.session_state.stage == "ask_what":
-    st.session_state.what = st.text_area("🐱 어떤 일이 있었는지 자세히 말해줘냥!")
+    st.session_state.what = st.text_area("🐱 어떤 일이 있었는지 자세히 말해줘냥")
     if st.button("다음") and st.session_state.what.strip():
         with st.spinner("치치가 감정을 추측 중이야... 🐾"):
             result = get_emotion_candidates(st.session_state.who, st.session_state.when, st.session_state.what)
-            st.session_state.emotion_choices = result.split("\n")
+            st.session_state.emotion_choices = [line.strip() for line in result.split("\n") if ":" in line]
         st.session_state.stage = "choose_emotion"
         st.rerun()
 
@@ -88,7 +88,7 @@ elif st.session_state.stage == "choose_emotion":
         if chosen == "이 감정들이 아니야":
             with st.spinner("다른 감정을 찾아보는 중이냥..."):
                 new_choices = get_alternative_emotions(st.session_state.who, st.session_state.when, st.session_state.what)
-                st.session_state.emotion_choices = new_choices.split("\n")
+                st.session_state.emotion_choices = [line.strip() for line in new_choices.split("\n") if ":" in line]
                 st.rerun()
         else:
             st.session_state.final_emotion = chosen.split(":")[0].strip()
