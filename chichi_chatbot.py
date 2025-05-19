@@ -61,7 +61,7 @@ def get_final_response(emotion, who, when, what):
 
 # 단계별 인터페이스
 if st.session_state.stage == "ask_who":
-    st.session_state.who = st.text_input("🐱 누구와 있었냥?")
+    st.session_state.who = st.text_input("🐱 누구와 있었던 일이냥?")
     if st.button("다음") and st.session_state.who.strip():
         st.session_state.stage = "ask_when"
         st.rerun()
@@ -73,7 +73,7 @@ elif st.session_state.stage == "ask_when":
         st.rerun()
 
 elif st.session_state.stage == "ask_what":
-    st.session_state.what = st.text_area("🐱 어떤 일이 있었는지 자세히 말해줘냥")
+    st.session_state.what = st.text_area("🐱 어떤 일이 있었는지 자세히 말해줘냥!")
     if st.button("다음") and st.session_state.what.strip():
         with st.spinner("치치가 감정을 추측 중이야... 🐾"):
             result = get_emotion_candidates(st.session_state.who, st.session_state.when, st.session_state.what)
