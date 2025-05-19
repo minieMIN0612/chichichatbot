@@ -61,7 +61,7 @@ def get_final_response(emotion, who, when, what):
 
 # 단계별 인터페이스
 if st.session_state.stage == "ask_who":
-    st.session_state.who = st.text_input("🐱 누구와 있었냥?")
+    st.session_state.who = st.text_input("🐱 누구와 있었던 일이냥?")
     if st.button("다음") and st.session_state.who.strip():
         st.session_state.stage = "ask_when"
         st.rerun()
