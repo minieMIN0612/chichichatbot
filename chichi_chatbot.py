@@ -3,7 +3,7 @@ import openai
 
 # 페이지 설정
 st.set_page_config(page_title="치치와 감정 알아보기", page_icon="🐱")
-st.title("🐱 치치가 들어줄게냥!")
+st.title("🐱 치치에게 한 번 물어보라옹!")
 st.write("무슨 일이 있었냥? 어떤 마음인지 함께 알아보자옹!")
 
 # ✅ secrets에서 API 키 가져오기
