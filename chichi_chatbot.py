@@ -33,25 +33,25 @@ def get_emotion_candidates(who, when, what):
     response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "넌 감정을 분석해주는 따뜻한 고양이 치치야. 사용자에게 '~냥' 또는 '~옹' 말투로 반응하고, 상황을 듣고 예상 감정 단어를 정의와 함께 제공해줘."},
+            {"role": "system", "content": "넌 감정을 분석해주는 따뜻한 고양이 치치야. 사용자에게 '~냥' 또는 '~옹'으로 문장이 끝나는 말투로 따뜻하고 사랑스럽게 반응하고, 상황을 듣고 예상 감정 단어를 정의와 함께 제공해줘."},
             {"role": "user", "content": prompt}
         ]
     )
     return response.choices[0].message.content.strip()
 
 def get_alternative_emotions(who, when, what):
-    prompt = f"누구: {who}\n언제: {when}\n어떤 일: {what}\n이전에 제공한 감정이 아니라고 했을 때, 대체 가능한 감정 단어 3개와 그 정의를 감정단어: 정의 형태로 알려줘. 감정 외의 문장은 포함하지 말고 감정 단어만 제시해줘."
+    prompt = f"누구: {who}\n언제: {when}\n어떤 일: {what}\n이전에 제공한 감정이 아니라고 했을 때, 대체 가능한 새로우면서 앞서 제시한 단어와 다른 감정 단어 3개와 그 정의를 감정단어: 정의 형태로 알려줘. 감정 외의 문장은 포함하지 말고 감정 단어만 제시해줘."
     response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "넌 감정을 분석해주는 따뜻한 고양이 치치야. 사용자에게 '~냥' 또는 '~옹' 말투로 반응하고, 상황을 듣고 예상 감정 단어를 정의와 함께 제공해줘."},
+            {"role": "system", "content": "넌 감정을 분석해주는 따뜻한 고양이 치치야. 사용자에게 '~냥' 또는 '~옹'으로 문장이 끝나는 말투로 따뜻하고 사랑스럽게 반응하고, 상황을 듣고 예상 감정 단어를 정의와 함께 제공해줘."},
             {"role": "user", "content": prompt}
         ]
     )
     return response.choices[0].message.content.strip()
 
 def get_final_response(emotion, who, when, what):
-    prompt = f"상황: 누구={who}, 언제={when}, 어떤일={what}\n감정: {emotion}\n초등학생처럼 단어는 쉽고 말투는 따뜻하게, '~냥' 또는 '~옹' 어미를 섞어 고양이 치치가 말하듯 공감, 위로, 격려, 칭찬 중 하나를 골라 반응해줘. 이모지 한 개도 포함해줘."
+    prompt = f"상황: 누구={who}, 언제={when}, 어떤일={what}\n감정: {emotion}\n초등학생처럼 단어는 쉽고 말투는 따뜻하게, '~냥' 또는 '~옹' 어미를 섞어 고양이 치치가 말하듯 공감, 위로, 격려, 칭찬 중 하나를 골라 반응해줘. 이모지 한 개도 포함해줘. 반드시 학생이 사용한 인물의 명칭을 그대로 사용하고, 학생이 서술한 상황과 그에 대해 선택한 감정단어를 사용해서 상황에 어울리는 위로나 공감을 해야해. 말의 끝은 '~옹', '~냥'으로 끝나지만 맞춤법은 지켜줘."
     response = openai.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
